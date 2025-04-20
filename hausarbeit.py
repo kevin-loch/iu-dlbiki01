@@ -1,23 +1,23 @@
 
 # Import der Bibliotheken
 
-import numpy # Bibliothek unter anderem für die Verwendung von Arrays 
-import matplotlib.pyplot as plot # Für die Visualisierung von Daten 
+import numpy # Bibliothek unter anderem für die Verwendung von Arrays.
+import matplotlib.pyplot as plot # Für die Visualisierung von Daten. 
 
-# Import von verschiedenen Klassen/Algorithmen aus der Scikit Bibliothek 
-from sklearn.cluster import KMeans # Import K-Means Algorithmus
-from sklearn.svm import SVC # Import Support-Vektor-Machine Algorithmus 
-from sklearn.preprocessing import MinMaxScaler # Import der Klasse MinMaxScaler für Normalisierung der Daten
+# Import von verschiedenen Klassen/Algorithmen aus der Scikit Bibliothek. 
+from sklearn.cluster import KMeans # Import K-Means Algorithmus.
+from sklearn.svm import SVC # Import Support-Vektor-Machine Algorithmus. 
+from sklearn.preprocessing import MinMaxScaler # Import der Klasse MinMaxScaler für Normalisierung der Daten.
 
-from sklearn.metrics import classification_report, confusion_matrix # Import der Funktionen für die Bewertungsmatrix
-from sklearn.datasets import fetch_openml # Import der Funktionen für das Laden des MNIST Datensatzes
-from sklearn.model_selection import train_test_split # Import der Funktion für Leistungsüberprüfung 
+from sklearn.metrics import classification_report, confusion_matrix # Import der Funktionen für die Bewertungsmatrix.
+from sklearn.datasets import fetch_openml # Import der Funktionen für das Laden des MNIST Datensatzes.
+from sklearn.model_selection import train_test_split # Import der Funktion für Leistungsüberprüfung.
 # Pandas zur Darstellung von Daten
 
 # MNIST Datensatz laden
 print("MNIST-Datensatz wird geladen...")
-mnist = fetch_openml('mnist_784', version=1, as_frame=False) #Angabe des Datensatzes, welches aus https://www.openml.org/search?type=data&status=active&tags.tag=Computer-Vision&id=554 heruntergeladen wird.
-X = mnist.data # Enthält Bilddateien (als Matrix)
+mnist = fetch_openml('mnist_784', version=1, as_frame=False) # Angabe des Datensatzes, welches aus https://www.openml.org/search?type=data&status=active&tags.tag=Computer-Vision&id=554 heruntergeladen wird.
+X = mnist.data # Enthält Bilddateien (als Matrix).
 Y = mnist.target.astype(int) # Umrechnung für spätere Berechnungen, da fetch_openml die einzelnen Bilder als str lädt. Enthält die Werte, welche auf den Bildern zu sehen sind.
 
 # Aufteilung der Daten (60k Training, 10k Testen)
@@ -39,13 +39,13 @@ print("K-Means wird trainiert...")
 kmeans = KMeans(n_clusters=10, init='k-means++', n_init=10, random_state=42)  # Parameter in richtiger Reihenfolge: 10 Cluster aufgrund von 10 Zeichen, Auswahl der Initialisierungsmethode, Anzahl an Durchläufen, Zufallszahlengenerierung.
 kmeans.fit(X_train) # Anwendung Modell auf die Trainingsdaten.
 
-# Cluster (Label werden zugeordnet  
+# Cluster (Labels werden zugeordnet)
 print("Cluster-Labels werden bestimmt...")
-labels = {} # Erstellung leeres Dictionary
+labels = {} # Erstellung leeres Dictionary.
 for cluster in range(10): # Gehe durch insgesamt 10 Cluster...
-    index = numpy.where(kmeans.labels_ == cluster)[0] #Liste mit Indizes
+    index = numpy.where(kmeans.labels_ == cluster)[0] #Liste mit Indizes.
     if len(index) > 0:
-        maj_label = numpy.bincount(Y_train[index]).argmax() # Es werden die Werte der Bilddateien für das Training verwendent, np.bincount zählt wie oft jede Ziffer darin vorkommt, argmax gibt den Index mit den meisten Stimmen zurück.
+        maj_label = numpy.bincount(Y_train[index]).argmax() # Es werden die Werte der Bilddateien für das Training verwendet. Numpy.bincount zählt, wie oft jede Ziffer darin vorkommt. Argmax gibt den Index mit den meisten Stimmen zurück.
         labels[cluster] = maj_label
     else:
         labels[cluster] = -1  # Falls das Cluster leer sein sollte.
@@ -55,8 +55,8 @@ print("Vorhersage mit k-Means...")
 test_clusters = kmeans.predict(X_test) # Mittels der Fuktion wird bestimmt, welche Bilddatei in welches der 10 Cluster fallen würde.
 
 # Es werden die Cluster-IDs in Ziffernlabels umgewandelt. 
-# Leeres Array (Liste) für die Vorhersagen
-pred_kmeans = []
+
+pred_kmeans = [] # Leeres Array (Liste) für die Vorhersagen.
 
 # Alle Clusterzuordnungen der Testbilder werden durchlaufen.
 for c in test_clusters:
@@ -83,7 +83,7 @@ samples = 10000
 svm.fit(X_train[:samples], Y_train[:samples]) # Modell wird trainiert. Bilddateien und Werte für Bilddateien (Labels) für das Training werden geladen. Samples gibt an, wieviele Zeilen angenommen werden.
 
 print("Vorhersage mit SVM.")
-pred_svm = svm.predict(X_test) # Mit der Methode werden neue Vorhersagen getätigt. Hierbei wird die X_test Varialbe verwendet, um Bilddateien zu verwenden, welche nicht beim Training verwendet (unbekannt) wurden. 
+pred_svm = svm.predict(X_test) # Mit der Methode werden neue Vorhersagen getätigt. Hierbei wird die X_test Varialbe verwendet, welche nicht beim Training beachtet wurde. 
 
 # Berichterstellung
 print("\nErgebnisse k-Means:")
@@ -99,18 +99,18 @@ kf_svm = confusion_matrix(Y_test, pred_svm) # Vergleich mit wahren Labels (Y_tes
 
 # Visuelle Analyse der Konfusionsmatrix
 axes[0].imshow(kf_kmeans, cmap='Blues') # Stellt das Array als Bild dar. Es verwendet eine Blaustufen-Farbskala. 0 bedeutet linker Plot.
-axes[0].set_title('Confusion Matrix k-Means') # Titelvergabe linker Plot
-axes[0].set_xlabel('Vorhergesagt') # Beschriftung x-Achse linker Plot
-axes[0].set_ylabel('Wahr') # Beschriftung y-Achse linker Plot
+axes[0].set_title('Confusion Matrix k-Means') # Titelvergabe linker Plot.
+axes[0].set_xlabel('Vorhergesagt') # Beschriftung x-Achse linker Plot.
+axes[0].set_ylabel('Wahr') # Beschriftung y-Achse linker Plot.
 
 
 axes[1].imshow(kf_svm, cmap='Greens') # Stellt das Array als Bild dar. Es verwendet eine Grünstufen-Farbskala. 1 bedeutet rechter Plot.
-axes[1].set_title('Confusion Matrix SVM') # Titelvergabe rechter Plot
-axes[1].set_xlabel('Vorhergesagt') # Beschriftung x-Achse rechter Plot
-axes[1].set_ylabel('Wahr') # Beschriftung y-Achse rechter Plot
+axes[1].set_title('Confusion Matrix SVM') # Titelvergabe rechter Plot.
+axes[1].set_xlabel('Vorhergesagt') # Beschriftung x-Achse rechter Plot.
+axes[1].set_ylabel('Wahr') # Beschriftung y-Achse rechter Plot.
 
-plot.tight_layout() # Optimierung des Abstandes
-plot.show() # Konfusionsmatrix wird erstellt
+plot.tight_layout() # Optimierung des Abstandes.
+plot.show() # Konfusionsmatrix wird erstellt.
 
 '''
 Folgende Dokumentationen wurden für die Erstellung des Quellcodes benötigt:
@@ -125,7 +125,7 @@ Fetch_openml: https://scikit-learn.org/stable/modules/generated/sklearn.datasets
 Train_test_split: https://datascientest.com/de/train-test-split
 MNIST Datensatz: https://www.openml.org/search?type=data&sort=runs&id=554&status=active
 Matplotlib: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html
-Matplotlib Imshow: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
+Matplotlib imshow: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 Tight_Layout: https://matplotlib.org/stable/users/explain/axes/tight_layout_guide.html
 
 '''
